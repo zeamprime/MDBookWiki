@@ -1,0 +1,18 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+div.search-bar { background-color: #eee; padding: 3px; }
+
+div.header h1 {
+	width: 50%;
+	background-color: #eee;
+	color: #338;
+	padding: 2px;
+}
+div#controls { position: absolute; top: 7px; right: 10px; }

@@ -1,0 +1,33 @@
+{
+  "name": "MDBookWiki",
+  "description": "Personal wiki using markdown format.",
+  "main": "app.js",
+  "authors": [
+    "Everett Morse"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "wiki",
+    "book",
+    "writing",
+    "markdown",
+    "personal"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "http://localhost/experiments/react/index.html",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "react": "^0.14.7",
+    "marked": "^0.3.5"
+  }
+}

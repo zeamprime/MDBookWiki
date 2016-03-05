@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BookWiki - <%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    
+    <script type='text/javascript'>
+    	function goToPage(name) {
+    		document.location = '/page/' + name;
+    	}
+    </script>
+    
+  </head>
+  <body>
+    <h1>Page Index - <%= title %></h1>
+    <div class='search-bar'>
+    	<form method='GET' onSubmit="goToPage(document.getElementById('search').value); return false;" style='float: left'>
+    	<label for='search'>Search for or create a new page:</label>
+    	<input type='text' size='30' id='search' />
+    	<input type='submit' id='searchBtn' value='Go' />
+    	</form>
+    	
+    	<a href='/' style='float: right'>Home</a>
+    	<p style='clear: both' />
+    </div>
+    
+    <ul>
+		<% for(var i=0; i < pages.length; i++) {%>
+			<li><a href="<%= pages[i].url %>"><%= pages[i].name %></a></li>
+		<% } %>
+    </ul>
+    
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/bower_components/react/react.min.js"></script>
+    <script src="/bower_components/react/react-dom.min.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/marked/marked.min.js"></script>
+  </head>
+  <body>
+  	<div class='header' style='position: relative'>
+	    <h1><%= title %></h1>
+	    <div id='controls'>
+	    	<input class='editor-btn' type='button' id='boldBtn' value='B' />
+	    	<input class='editor-btn' type='button' id='linkBtn' value='Link' />
+	    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    <a href='/'>Home</a>
+	    	<input type='button' id='toggleBtn' value='<%= editMode? 'Save' : 'Edit'%>' />
+    	</div>
+    </div>
+    <div id='content' style='display: <%= editMode? 'none' : 'block'%>'><%- htmlContent %></div>
+    <textarea id='edit' style='display: <%= editMode? 'block' : 'none'%>; width: 100%; min-height: 500px;'><%= content %></textarea>
+    
+    <div style='margin-top: 30px; color: #999;' id='status'></div>
+    
+    
+    <script type='text/javascript'>
+    	
+    	function saveOrEdit(e) {
+    		var action = $('#toggleBtn').val();
+    		if( action == "Save" ) {
+    			save();
+    		} else if( action == "Edit" ) {
+    			edit();
+    		}
+    		
+    		return false;
+    	}
+    	function save() {
+    		//Render
+    		var text = $('#edit').val();
+    		$('#content').html(marked(text));
+    		
+    		//Save to server
+    		$.post('<%= url %>', {content: text}, function(data, status) {
+    			$('#status').text(data);
+    			setTimeout(function(){ $('#status').text(""); }, 3000);
+    		}); //TODO: show error
+    		
+    		//Uodate UI
+    		$('#edit').hide();
+    		$('#content').show();
+    		$('#toggleBtn').val('Edit');
+    		$('input.editor-btn').hide();
+    	}
+    	function edit() {
+    		$('#content').hide();
+    		$('#edit').show();
+    		$('#toggleBtn').val('Save');
+    		$('input.editor-btn').show();
+    	}
+    	
+    	function makeBold(e) {
+    		var field = $('#edit').get(0);
+    		var content = getSelection(field);
+    		if( !content ) {
+    			content = "bold";
+    		}
+    		insertAtCursor($('#edit').get(0), "**"+content+"**");
+    	}
+    	
+    	function insertLink(e) {
+    		var field = $('#edit').get(0);
+    		var name = getSelection(field);
+    		if( !name || !name.match(/[a-zA-Z_0-9 +-]+/) ) {
+    			name = "newpage";
+    		}
+    		insertAtCursor(field, "["+name+"]("+name+")");
+    	}
+    	
+    	// http://stackoverflow.com/questions/11076975/insert-text-into-textarea-at-cursor-position-javascript
+		function insertAtCursor(myField, myValue) {
+			//IE support
+			if (document.selection) {
+				myField.focus();
+				sel = document.selection.createRange();
+				sel.text = myValue;
+			}
+			//MOZILLA and others
+			else if (myField.selectionStart || myField.selectionStart == '0') {
+				var startPos = myField.selectionStart;
+				var endPos = myField.selectionEnd;
+				myField.value = myField.value.substring(0, startPos)
+					+ myValue
+					+ myField.value.substring(endPos, myField.value.length);
+				myField.selectionStart = startPos + myValue.length;
+				myField.selectionEnd = startPos + myValue.length;
+			} else {
+				myField.value += myValue;
+			}
+		}
+		//My func based on the above
+		function getSelection(myField) {
+			if (document.selection) {
+				myField.focus();
+				sel = document.selection.createRange();
+				return sel.text;
+			} else if (myField.selectionStart || myField.selectionStart == '0') {
+				var startPos = myField.selectionStart;
+				var endPos = myField.selectionEnd;
+				return myField.value.substring(startPos, endPos);
+			}
+			return null;
+		}
+    	
+    	$(function() {
+    		$('#toggleBtn').click(saveOrEdit);
+    		$('#boldBtn').click(makeBold);
+    		$('#linkBtn').click(insertLink);
+    		
+    		if( $('#toggleBtn').val() == 'Edit' ) {
+    			$('input.editor-btn').hide();
+    		}
+    	});
+    </script>
+    
+  </body>
+</html>

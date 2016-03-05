@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BookWiki - <%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    
+    <script type='text/javascript'>
+    	function goToPage(name) {
+    		document.location = '/page/' + name;
+    	}
+    </script>
+    
+  </head>
+  <body>
+    <h1>BookWiki - <%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    
+    <div class='search-bar'>
+    	<form method='GET' onSubmit="goToPage(document.getElementById('search').value); return false;">
+    	<label for='search'>Search for or create a new page:</label>
+    	<input type='text' size='30' id='search' />
+    	<input type='submit' id='searchBtn' value='Go' />
+    	</form>
+    </div>
+    
+    <div>
+    	<h3>Top and recent pages:</h3>
+    	<ul>
+    		<% for(var i=0; i < pages.length; i++) {%>
+				<li><a href="<%= pages[i].url %>"><%= pages[i].name %></a></li>
+			<% } %>
+    	</ul>
+    </div>
+    
+    <p style='margin-top: 50px;' />
+    <hr/>
+    <div>
+    	<form method='POST' action='/'>
+    	Rename the book:<br/>
+    	<label for='bookname'>Title: </label>
+    	<input type='text' size='30' id='bookname' name='bookname' value='<%= title %>' />
+    	<input type='submit' id='renameBtn' name='act' value='Rename' />
+    	</form>
+    </div>
+    
+    <br/>
+    <a href='/page/page-index'>All Pages</a>
+    
+  </body>
+</html>

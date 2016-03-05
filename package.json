@@ -1,0 +1,32 @@
+{
+  "name": "MDBookWiki",
+  "version": "0.1.0",
+  "description": "Personal wiki using markdown format.",
+  "main": "index.js",
+  "dependencies": {
+    "express": "~4.13.4",
+    "marked": "~0.3.5",
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.2.0",
+    "ejs": "~2.3.3",
+    "morgan": "~1.6.1",
+    "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www",
+    "server": "nodemon ./bin/www",
+    "watch": "watchify -t reactify js/main.jsx -o public/javascripts/bundle.js -v"
+  },
+  "keywords": [
+    "wiki",
+    "book",
+    "writing",
+    "markdown",
+    "personal"
+  ],
+  "author": "Everett Morse",
+  "license": "ISC"
+}
