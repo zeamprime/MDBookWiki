@@ -114,10 +114,29 @@
 			return null;
 		}
     	
+    	function commandKey(e) {
+    		if( e.metaKey || e.ctrlKey ) {
+    			var ch = String.fromCharCode(e.which);
+    			//$('#status').text("read char: " + ch);
+    			if( ch === 'B' ) {
+    				makeBold(e);
+    				e.preventDefault();
+    			} else if( ch === 'K' ) {
+    				insertLink(e);
+    				e.preventDefault();
+    			} else if( ch === 'S' ) {
+    				save();
+    				e.preventDefault();
+    			}
+    		}
+    	}
+    	
     	$(function() {
     		$('#toggleBtn').click(saveOrEdit);
     		$('#boldBtn').click(makeBold);
     		$('#linkBtn').click(insertLink);
+    		
+    		$('#edit').keydown(commandKey);
     		
     		if( $('#toggleBtn').val() == 'Edit' ) {
     			$('input.editor-btn').hide();

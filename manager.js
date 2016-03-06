@@ -3,6 +3,9 @@ module.exports = function(app) {
 	var path = require('path');
 	var fs = require('fs');
 	var marked = require('marked');
+	var child_process = require('child_process');
+	
+	var MAX_HISTORY = 30;
 	
 	/***
 	 * Class for managing the site metadata and list of pages.
@@ -34,9 +37,10 @@ module.exports = function(app) {
 			if( this.info.title === undefined ) {
 				this.info.title = "MyBook";
 			}
-			if( typeof(this.info.recent) === 'array' ) {
+			if( Array.isArray(this.info.recent) ) {
 				this.recent = this.info.recent;
 			}
+			console.log(JSON.stringify(this.info));
 		},
 		
 		/**
@@ -55,6 +59,8 @@ module.exports = function(app) {
 			fs.writeFile(filepath, JSON.stringify(this.info), function(err) {
 				if(err) {
 					console.log("Error saving book information: " + err);
+				} else {
+					console.log("Saved info.json");
 				}
 			});
 		},
@@ -112,15 +118,14 @@ module.exports = function(app) {
 		 * the home page's list.
 		 */
 		getRecentAndTopPages: function(limit) {
-			if( !limit ) limit = 30;
+			if( !limit ) limit = MAX_HISTORY;
 			var self = this;
 			var list = [];
 			
 			//Add in the "top" pages. These might not all exist.
 			['home', 'overview', 'index', 'book', 'main'].forEach(function(name) {
-				if( self.pages[name] ) {
-					list.push(self.pages[name]);
-				}
+				var page = self.pages[name];
+				if(page) list.push(page);
 			});
 			
 			//Grab the N most recent pages
@@ -138,7 +143,7 @@ module.exports = function(app) {
 		 */
 		addRecent: function(pageName) {
 			var newList = [pageName.toLowerCase()];
-			for(var i; i < this.recent.length && i < 30; i++) {
+			for(var i = 0; i < this.recent.length && i < MAX_HISTORY; i++) {
 				if( this.recent[i] != pageName.toLowerCase() ) {
 					newList.push(this.recent[i]);
 				}
@@ -148,7 +153,7 @@ module.exports = function(app) {
 			//Periodically save to keep the recent list up-to-date.
 			if( !this._saveTimer ) {
 				var self = this;
-				this._saveTimer = setTimeout(function() { self._saveCallback }, 5 * 60 * 1000);
+				this._saveTimer = setTimeout(function() { self._saveCallback() }, 5 * 60 * 1000);
 			}
 		},
 		
@@ -193,9 +198,20 @@ module.exports = function(app) {
 			fs.writeFile(this.path, this._content, function(err) {
 				if(err) {
 					console.log("Failed to save " + self.name + ": " + err);
+					return;
 				}
 				
-				//TODO: invoke 'cd content; git -am "Updated '+this.name+'"'
+				//Save in GIT to preserve history
+				var cmd = 'cd content && git add "' + path.basename(self.path) + 
+						'" && git commit -m "Updated ' + self.name + '"';
+				child_process.exec(cmd, function(err, out) {
+					if( !err && out && out.indexOf("Error") !== -1 ) { err = out; }
+					if(err) {
+						console.log("Failed to commit " + self.name + ": " + err);
+						return;
+					}
+					console.log("Saved " + self.name + ": " + out);
+				});
 				
 				if(cb) cb(err);
 			});
