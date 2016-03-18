@@ -28,7 +28,7 @@ module.exports = function(manager) {
 		
 		res.render('index', { 
 			title: manager.title,
-			pages: manager.getRecentAndTopPages(10)
+			pages: manager.getRecentAndTopPages(20)
 		});
 	});
 	
