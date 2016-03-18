@@ -17,8 +17,10 @@ First, make sure you have npm and git installed. Then a simple npm install and b
 
 Create a directory named `content` in the root folder of the project. Then initialize it as a git repository.
 
-    git clone ....
+    git clone https://github.com/zeamprime/MDBookWiki.git MDBookWiki
     cd MDBookWiki
+    npm install -g nodemon
+    npm install -g bower
     npm install
     bower install
     mkdir content
