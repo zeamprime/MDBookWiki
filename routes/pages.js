@@ -22,6 +22,7 @@ module.exports = function(manager) {
 			res.send('Invalid page name: ' + name);
 			return;
 		}
+		name = name.replace(/[^a-zA-Z0-9 +-_]/g,"")
 		var page = manager.getPage(name);
 		if( page === undefined ) {
 			res.render('page', { 
@@ -53,6 +54,7 @@ module.exports = function(manager) {
 			res.send('Invalid page name: ' + name);
 			return;
 		}
+		name = name.replace(/[^a-zA-Z0-9 +-_]/g,"")
 		
 		manager.updatePage(name, req.body.content);
 		res.send('Updated - ' + req.body.content.length + ' chars');
